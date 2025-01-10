@@ -1,0 +1,73 @@
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <title>TxDOT Highway Designation Files Search</title>
+
+        <link rel = "stylesheet" href = "https://js.arcgis.com/4.26/esri/themes/light/main.css"/>
+        <script src = "https://js.arcgis.com/4.26/"></script>
+        <script type="module" src="https://js.arcgis.com/calcite-components/2.13.2/calcite.esm.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.13.2/calcite.css" />
+
+        <style>
+            .header {
+                padding: 30px;
+                text-align: center;
+                background: #0057A8;
+                color: white;
+                font-size: 15px;
+            }
+        </style>
+
+        <script>
+
+        </script>
+    </head>
+
+    <body>
+        <div class="header">
+            <h1>TxDOT Highway Designation Files Search</h1>
+        </div>
+        <div>
+            <p>
+            Highway Designation Files provide a description of proposed changes to the state highway system. A “designation” is the unique combination of a route’s name and its intended path. Proposed changes include new designations and any changes to existing designations. Such changes are approved by the <a href="http://www.txdot.gov/inside-txdot/administration/commission.html">Texas Transportation Commission</a> and are officially documented on Minute Orders, which can be found <a href="https://publicdocs.txdot.gov/minord/mosearch/Pages/Minute-Order-Search-Results.aspx#Minute-Order-Search-Results.aspx">here.</a> Highway Designation Files use language from the Minute Orders to provide a brief overview of the proposed changes. To learn more about the designation process, click <a href="http://www.txdot.gov/inside-txdot/division/transportation-planning/highway-designation.html">here.</a>
+            </p>
+            <p>
+                <strong>
+                    It is important to emphasize that Minute Orders and the resulting Highway Designation Files describe proposed changes. They do not necessarily describe current, on-the-ground conditions.
+                </strong>
+            </p>
+            <p>
+                For questions or comments about the Texas Highway Designation Files, please <a href="https://www.txdot.gov/about/contact-us/ask-a-general-question.html?id=tpp-email">email us.</a>
+            </p>
+            <p>
+                Use the tool below to search for Highway Designation Files pertaining to specific routes.
+            </p>
+        </div>
+        <calcite-select>
+            <calcite-option value="default">Select a Route Prefix...</calcite-option>
+            <calcite-option value="BF">BF - Business Farm to Market Road</calcite-option>
+            <calcite-option value="BI">BI - Business Interstate Highway</calcite-option>
+            <calcite-option value="BS">BS - Business State Highway</calcite-option>
+            <calcite-option value="BU">BU - Business US Highway</calcite-option>
+            <calcite-option value="FM">FM - Farm to Market Road</calcite-option>
+            <calcite-option value="FS">FS - Farm to Market Road Spur</calcite-option>
+            <calcite-option value="IH">IH - Interstate Highway</calcite-option>
+            <calcite-option value="PA">PA - Principal Arterial Street System</calcite-option>
+            <calcite-option value="PR">PR - Park Road</calcite-option>
+            <calcite-option value="RE">RE - Recreational Road</calcite-option>
+            <calcite-option value="RM">RM - Ranch to Market Road</calcite-option>
+            <calcite-option value="RR">RR - Ranch Road</calcite-option>
+            <calcite-option value="SH">SH - State Highway</calcite-option>
+            <calcite-option value="SL">SL - State Highway Loop</calcite-option>
+            <calcite-option value="SS">SS - State Highway Spur</calcite-option>
+            <calcite-option value="UA">UA - US Alternate</calcite-option>
+            <calcite-option value="UP">UP - US Highway Spur</calcite-option>
+            <calcite-option value="UR">UR - Urban Road</calcite-option>
+            <calcite-option value="US">US - US Highway</calcite-option>
+        </calcite-select>
+        <calcite-input placeholder="Enter Route Number"></calcite-input>
+
+    </body>
+</html>
+
+
