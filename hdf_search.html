@@ -37,6 +37,20 @@
                 font-weight: bold;
                 margin-top: 20px;
             }
+            /* table {
+            width: 100%;
+            border-collapse: collapse;
+            }
+            table, th, td {
+                border: 1px solid #ddd;
+            }
+            th, td {
+                padding: 8px;
+                text-align: left;
+            }
+            th {
+                background-color: #f2f2f2;
+            } */
         </style>
 
         <script>
@@ -93,20 +107,44 @@
                     resetSearchToolNow();
                 });
 
-                // Create function to search table for routes
+                // Create function to search table for routes //MAY NEED TO DELETE THIS ... LET US SEE LATER
                 function searchForRouteNow() {
                     console.log("search for route function");
-                    console.log("searching ... rte prefix value:", selectRtePrefix.value);
-                    console.log("searching ... rte number value:", inputRteNumber.value);
 
                     if (inputRteNumber.value == "") {
                         //console.log("rte number is empty!");
                         alert('You must input a RTE Number before searching for Highway Designation Files. Type in a RTE Number in the input box, and then try again.');
                     }
+                  
+                    let xmlhttp; // Create variable for xmlhttp request, used below to get info from server
 
+                    if (window.XMLHttpRequest) { // Coe for IE7+, Firefox, Chrome, Opera, Safari
+                        xmlhttp = new XMLHttpRequest();
+                    }
+
+                    else { // Code for IE6, IE5
+                        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                    }
+
+                    // After request goes through, need to display results
+                    xmlhttp.onreadystatechange=async function() {
+                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+                            console.log('success, display results!');
+                            console.log(this.responseText)
+                        }
+                    }
+
+                    // Service url
+                    let serviceURL = "https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer";
+
+                    // Variables to save inputs from user
                     let rtePrefix = selectRtePrefix.value;
                     let rteNumber = inputRteNumber.value;
+                    serviceURL += "?'RTE_Prefix':" + rtePrefix + ",'RTE_Number':" + rteNumber + "}}";
 
+                    // POSTING EDITS TO LAYER
+                    xmlhttp.open("GET",serviceURL,true);
+                    xmlhttp.send();  
                 };
 
                 // Create function to search table for routes
@@ -115,7 +153,7 @@
                     window.location.reload();
                 };
 
-            }
+            };
             
         </script>
     </head>
@@ -165,9 +203,26 @@
                 <calcite-option id="US" value="US">US - US Highway</calcite-option>
             </calcite-select>
             <calcite-label class="boldLabel">Enter Route Number</calcite-label>
-            <calcite-input id="inputRteNumber" placeholder="Enter Route Number" clearable></calcite-input>
+            <calcite-input-number id="inputRteNumber" placeholder="Enter Route Number" clearable number-button-type="none"></calcite-input-number>
             <calcite-button id="searchForRoute" class="boldLabel button" icon-start="all-servers">Search for Route</calcite-button>
             <calcite-button id="resetSearchTool" class="boldLabel button" appearance="outline-fill">Reset Search Tool</calcite-button>
+            <br><br>
+            <!-- <table id='data-table'>
+                <thead>
+                    <tr>
+                        <th>File Name</th>
+                        <th>RTE_NM</th>
+                        <th>RTE_Prefix</th>
+                        <th>RTE_Number</th>
+                        <th>RTE_Suffix</th>
+                        <th>Order</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                // Rows will be added here by JavaScript
+                </tbody> -->
         </div>
 
     </body>
