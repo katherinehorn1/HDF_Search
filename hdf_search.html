@@ -56,37 +56,9 @@
 
         <script>
             window.onload=function(){
-                // Create Calcite select options
+                // Create Calcite elements 
                 const selectRtePrefix = document.getElementById("selectRtePrefix"); // Create variable for entire calcite select element
-                const BFSelect = document.getElementById("BF"); // Create variable for specific select options
-                const BISelect = document.getElementById("BI");
-                const BSSelect = document.getElementById("BS");
-                const BUSelect = document.getElementById("BU");
-                const FMSelect = document.getElementById("FM");
-                const FSSelect = document.getElementById("FS");
-                const ISSelect = document.getElementById("IH");
-                const PASelect = document.getElementById("PA");
-                const PRSelect = document.getElementById("PR");
-                const RESelect = document.getElementById("RE");
-                const RMSelect = document.getElementById("RM");
-                const RRSelect = document.getElementById("RR");
-                const SHSelect = document.getElementById("SH");
-                const SLSelect = document.getElementById("SL");
-                const SSSelect = document.getElementById("SS");
-                const UASelect = document.getElementById("UA");
-                const UPSelect = document.getElementById("UP");
-                const URSelect = document.getElementById("UR");
-                const USSelect = document.getElementById("US");
-
-                // Look for calcite select events
-                selectRtePrefix.addEventListener("calciteSelectChange", calciteSelectChange => {
-                    console.log("calciteSelectChange", selectRtePrefix.value);
-                });
-
-                // Create calcite input elements
                 const inputRteNumber = document.getElementById("inputRteNumber");
-
-                // Create calcite button elements
                 const searchForRoute = document.getElementById("searchForRoute");
                 const resetSearchTool = document.getElementById("resetSearchTool");
 
@@ -112,13 +84,7 @@
                     req.responseType = 'json';
 
                     // Service url
-                    let serviceURL = "https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer/0/query?where=rte_prefix+%3D+%27";
-
-                    // Variables to save inputs from user
-                    let rtePrefix = selectRtePrefix.value;
-                    let rteNumber = inputRteNumber.value;
-                    //serviceURL += rtePrefix + "%27+AND+rte_number+%3D+%27" + rteNumber + "%27&outFields=*&f=pjson";
-                    serviceURL += rtePrefix + "%27+AND+rte_number+%3D+%27" + rteNumber + "%27&outFields=rte_nm%2C+rte_prefix%2C+rte_number%2C+rte_suffix&returnDistinctValues=true&f=pjson";                 
+                    let serviceURL = `https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer/0/query?where=rte_prefix+%3D+%27${selectRtePrefix.value}%27+AND+rte_number+%3D+%27${inputRteNumber.value}%27&outFields=rte_nm%2C+rte_prefix%2C+rte_number%2C+rte_suffix&returnDistinctValues=true&f=pjson`;
 
                     // Send request
                     req.open("GET",serviceURL,true);
@@ -127,12 +93,6 @@
                     // After request goes through, need to display results
                     req.onreadystatechange=async function() {
                         if (req.readyState == 4 && req.status == 200) {
-                            //console.log('success, display results!');
-                            //console.log(req.response);
-                            //console.log(Object.keys(req.response));
-                            //console.log("features key", req.response["features"]);
-                            //console.log("number of results", req.response["features"].length)
-
                             let features = req.response["features"];
                             let numFeatures = features.length;
                             if (numFeatures == 0) {
@@ -142,13 +102,13 @@
                                 document.getElementById('thead2').innerHTML = ''; 
                                 document.getElementById('tbody2').innerHTML = '';
 
+                                // Tell user there are no results
                                 document.getElementById('resultsInfo').innerHTML = `<strong>Found: </strong> ${numFeatures} results. Please try a new search.`;
                             } else {
-                                // Create Table with Results
-
-                                // PROBABLY WANT TO SAY HOW MANY RESULTS
+                                // Tell user how many results
                                 document.getElementById('resultsInfo').innerHTML = `<strong>Found: </strong> ${numFeatures} results`;
                                                             
+                                // Create Table with Results
                                 const headerRow = document.createElement("tr");
 
                                 // Clear previous results
@@ -158,18 +118,13 @@
                                 document.getElementById('tbody2').innerHTML = '';
 
                                 // Create header row
-                                //headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
-
                                 headerRow.innerHTML = `<th>Result #</th><th>Route Name</th><th>See More</th`;
-
                                 thead.appendChild(headerRow);
 
-                                // Create each result row
                                 let index = 1;
                                 features.forEach(element => {
                                     // Add rows to table for each result
                                     const row = document.createElement("tr");
-                                    //row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["rte_prefix"]}</td><td>${element["attributes"]["rte_number"]}</td><td>${element["attributes"]["rte_suffix"]}</td>`;                                    
                                     row.innerHTML = `<td>${index}</td><td>${element["attributes"]["rte_nm"]}</td><td><button onclick="getDetails('${element["attributes"]["rte_nm"]}')">>></button></td>`;
                                     tbody.appendChild(row);
                                     index++;
@@ -231,7 +186,7 @@
             </div>
             <div id="rteNumberTool" class="specificTool">
                 <calcite-label class="boldLabel">Enter Route Number</calcite-label>
-                <calcite-input-number id="inputRteNumber" placeholder="Enter Route Number" clearable number-button-type="none"></calcite-input-number>
+                <calcite-input id="inputRteNumber" placeholder="Route Number" clearable></calcite-input>
             </div>
             <calcite-button id="searchForRoute" class="boldLabel button specificTool" icon-start="all-servers">Search for Route</calcite-button>
             <calcite-button id="resetSearchTool" class="boldLabel button specificTool" appearance="outline-fill">Reset Search Tool</calcite-button>
@@ -262,7 +217,6 @@
         <script>
             function getDetails(rteName) {
                 // Create variable for xmlhttp request, used below to get info from server
-                console.log("inside get details function");
                 let req = new XMLHttpRequest();
                 req.responseType = 'json';
 
@@ -281,6 +235,7 @@
 
                         let features = req.response["features"];
                         let numFeatures = features.length;
+                        
                         // Create Table with Results
                                                         
                         const headerRow = document.createElement("tr");
@@ -296,14 +251,11 @@
 
                         // Create each result row
                         features.forEach(element => {
-                            // Add rows to table for each result
                             const row = document.createElement("tr");                                
                             row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["order_"]}</td><td>${element["attributes"]["title"]}</td><td>${element["attributes"]["description"]}</td>`;
                             tbody2.appendChild(row);
                         });                              
                     }
-
-                // "features" is key, value is array ... array of json objects
                 }
             }
         </script>
