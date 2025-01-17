@@ -3,8 +3,8 @@
         <meta charset="utf-8"/>
         <title>TxDOT Highway Designation Files Search</title>
 
-        <link rel = "stylesheet" href = "https://js.arcgis.com/4.26/esri/themes/light/main.css"/>
-        <script src = "https://js.arcgis.com/4.26/"></script>
+        <link rel = "stylesheet" href = "https://js.arcgis.com/4.31/esri/themes/light/main.css"/>
+        <script src = "https://js.arcgis.com/4.31/"></script>
         <script type="module" src="https://js.arcgis.com/calcite-components/2.13.2/calcite.esm.js"></script>
         <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/calcite-components/2.13.2/calcite.css" />
 
@@ -27,30 +27,30 @@
                 color:blue
             }
             #searchTool {
-                margin-top: 40px;
-                width: fit-content;
+                margin-top: 20px;
+                display: inline-flex;
+                align-items: flex-end;
+            }
+            .specificTool {
+                margin: 10px;
             }
             .button {
                 height: 40px;
             }
             .boldLabel {
                 font-weight: bold;
-                margin-top: 20px;
             }
-            /* table {
-            width: 100%;
-            border-collapse: collapse;
+            table {
+                width: 100%;
+                border-collapse: collapse;
             }
             table, th, td {
                 border: 1px solid #ddd;
             }
             th, td {
                 padding: 8px;
-                text-align: left;
+                text-align: center;
             }
-            th {
-                background-color: #f2f2f2;
-            } */
         </style>
 
         <script>
@@ -85,15 +85,6 @@
                 // Create calcite input elements
                 const inputRteNumber = document.getElementById("inputRteNumber");
 
-                // // Look for calcite input events
-                // inputRteNumber.addEventListener("calciteInputChange", calciteInputChange => {
-                //     console.log("calciteInputChange", inputRteNumber.value);
-                // });
-
-                // inputRteNumber.addEventListener("calciteInputInput", calciteInputInput => {
-                //     console.log("calciteInputInput", inputRteNumber.value);
-                // });
-
                 // Create calcite button elements
                 const searchForRoute = document.getElementById("searchForRoute");
                 const resetSearchTool = document.getElementById("resetSearchTool");
@@ -103,55 +94,80 @@
                     searchForRouteNow();
                 });
 
-                resetSearchTool.addEventListener("click", async () => { // WATCHES FOR IT TO BE CLICKED
-                    resetSearchToolNow();
+                resetSearchTool.addEventListener("click", async () => { // Watches for it to be clicked and then reloads page
+                    window.location.reload();
                 });
 
-                // Create function to search table for routes //MAY NEED TO DELETE THIS ... LET US SEE LATER
+                // Create function to search table for routes
                 function searchForRouteNow() {
-                    console.log("search for route function");
 
+                    // Do not let user search if they have not put in rte number
                     if (inputRteNumber.value == "") {
-                        //console.log("rte number is empty!");
                         alert('You must input a RTE Number before searching for Highway Designation Files. Type in a RTE Number in the input box, and then try again.');
                     }
-                  
-                    let xmlhttp; // Create variable for xmlhttp request, used below to get info from server
 
-                    if (window.XMLHttpRequest) { // Coe for IE7+, Firefox, Chrome, Opera, Safari
-                        xmlhttp = new XMLHttpRequest();
-                    }
-
-                    else { // Code for IE6, IE5
-                        xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-                    }
-
-                    // After request goes through, need to display results
-                    xmlhttp.onreadystatechange=async function() {
-                        if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-                            console.log('success, display results!');
-                            console.log(this.responseText)
-                        }
-                    }
+                    // Create variable for xmlhttp request, used below to get info from server
+                    let req = new XMLHttpRequest();
+                    req.responseType = 'json';
 
                     // Service url
-                    let serviceURL = "https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer";
+                    let serviceURL = "https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer/0/query?where=rte_prefix+%3D+%27";
 
                     // Variables to save inputs from user
                     let rtePrefix = selectRtePrefix.value;
                     let rteNumber = inputRteNumber.value;
-                    serviceURL += "?'RTE_Prefix':" + rtePrefix + ",'RTE_Number':" + rteNumber + "}}";
+                    //serviceURL += rtePrefix + "%27+AND+rte_number+%3D+%27" + rteNumber + "%27&outFields=*&f=pjson";
+                    serviceURL += rtePrefix + "%27+AND+rte_number+%3D+%27" + rteNumber + "%27&outFields=rte_nm%2C+rte_prefix%2C+rte_number%2C+rte_suffix&returnDistinctValues=true&f=pjson";                 
 
-                    // POSTING EDITS TO LAYER
-                    xmlhttp.open("GET",serviceURL,true);
-                    xmlhttp.send();  
-                };
+                    // Send request
+                    req.open("GET",serviceURL,true);
+                    req.send();  
 
-                // Create function to search table for routes
-                function resetSearchToolNow() {
-                    //console.log("reset search tool function");
-                    window.location.reload();
-                };
+                    // After request goes through, need to display results
+                    req.onreadystatechange=async function() {
+                        if (req.readyState == 4 && req.status == 200) {
+                            //console.log('success, display results!');
+                            //console.log(req.response);
+                            //console.log(Object.keys(req.response));
+                            //console.log("features key", req.response["features"]);
+                            //console.log("number of results", req.response["features"].length)
+
+                            let features = req.response["features"];
+                            let numFeatures = features.length;
+                            if (numFeatures == 0) {
+                                // Clear previous results
+                                document.getElementById('thead').innerHTML = ''; 
+                                document.getElementById('tbody').innerHTML = '';
+
+                                document.getElementById('resultsInfo').innerHTML = `Found: ${numFeatures} results. Please try a new search.`;
+                            } else {
+                                // Create Table with Results
+
+                                // PROBABLY WANT TO SAY HOW MANY RESULTS
+                                document.getElementById('resultsInfo').innerHTML = `Found: ${numFeatures} results`;
+                                                            
+                                const headerRow = document.createElement("tr");
+
+                                // Clear previous results
+                                document.getElementById('thead').innerHTML = ''; 
+                                document.getElementById('tbody').innerHTML = '';
+
+
+                                headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
+                                thead.appendChild(headerRow);
+
+                                features.forEach(element => {
+                                    // Add rows to table for each result
+                                    const row = document.createElement("tr");
+                                    row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["rte_prefix"]}</td><td>${element["attributes"]["rte_number"]}</td><td>${element["attributes"]["rte_suffix"]}</td>`;
+                                    tbody.appendChild(row);
+                                });                              
+                            }
+
+                            // "features" is key, value is array ... array of json objects
+                        }
+                    };
+                }
 
             };
             
@@ -180,51 +196,52 @@
             </p>
         </div>
         <div id="searchTool">
-            <calcite-label class="boldLabel">Select a Route Type</calcite-label>
-            <calcite-select id="selectRtePrefix">
-                <calcite-option id="BF" value="BF">BF - Business Farm to Market Road</calcite-option>
-                <calcite-option id="BI" value="BI">BI - Business Interstate Highway</calcite-option>
-                <calcite-option id="BS" value="BS">BS - Business State Highway</calcite-option>
-                <calcite-option id="BU" value="BU">BU - Business US Highway</calcite-option>
-                <calcite-option id="FM" value="FM">FM - Farm to Market Road</calcite-option>
-                <calcite-option id="FS" value="FS">FS - Farm to Market Road Spur</calcite-option>
-                <calcite-option id="IH" value="IH">IH - Interstate Highway</calcite-option>
-                <calcite-option id="PA" value="PA">PA - Principal Arterial Street System</calcite-option>
-                <calcite-option id="PR" value="PR">PR - Park Road</calcite-option>
-                <calcite-option id="RE" value="RE">RE - Recreational Road</calcite-option>
-                <calcite-option id="RM" value="RM">RM - Ranch to Market Road</calcite-option>
-                <calcite-option id="RR" value="RR">RR - Ranch Road</calcite-option>
-                <calcite-option id="SH" value="SH">SH - State Highway</calcite-option>
-                <calcite-option id="SL" value="SL">SL - State Highway Loop</calcite-option>
-                <calcite-option id="SS" value="SS">SS - State Highway Spur</calcite-option>
-                <calcite-option id="UA" value="UA">UA - US Alternate</calcite-option>
-                <calcite-option id="UP" value="UP">UP - US Highway Spur</calcite-option>
-                <calcite-option id="UR" value="UR">UR - Urban Road</calcite-option>
-                <calcite-option id="US" value="US">US - US Highway</calcite-option>
-            </calcite-select>
-            <calcite-label class="boldLabel">Enter Route Number</calcite-label>
-            <calcite-input-number id="inputRteNumber" placeholder="Enter Route Number" clearable number-button-type="none"></calcite-input-number>
-            <calcite-button id="searchForRoute" class="boldLabel button" icon-start="all-servers">Search for Route</calcite-button>
-            <calcite-button id="resetSearchTool" class="boldLabel button" appearance="outline-fill">Reset Search Tool</calcite-button>
-            <br><br>
-            <!-- <table id='data-table'>
-                <thead>
-                    <tr>
-                        <th>File Name</th>
-                        <th>RTE_NM</th>
-                        <th>RTE_Prefix</th>
-                        <th>RTE_Number</th>
-                        <th>RTE_Suffix</th>
-                        <th>Order</th>
-                        <th>Title</th>
-                        <th>Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                // Rows will be added here by JavaScript
-                </tbody> -->
+            <div id="rtePrefixTool" class="specificTool">
+                <calcite-label class="boldLabel">Select a Route Type</calcite-label>
+                <calcite-select id="selectRtePrefix">
+                    <calcite-option id="BF" value="BF">BF - Business Farm to Market Road</calcite-option>
+                    <calcite-option id="BI" value="BI">BI - Business Interstate Highway</calcite-option>
+                    <calcite-option id="BS" value="BS">BS - Business State Highway</calcite-option>
+                    <calcite-option id="BU" value="BU">BU - Business US Highway</calcite-option>
+                    <calcite-option id="FM" value="FM">FM - Farm to Market Road</calcite-option>
+                    <calcite-option id="FS" value="FS">FS - Farm to Market Road Spur</calcite-option>
+                    <calcite-option id="IH" value="IH">IH - Interstate Highway</calcite-option>
+                    <calcite-option id="PA" value="PA">PA - Principal Arterial Street System</calcite-option>
+                    <calcite-option id="PR" value="PR">PR - Park Road</calcite-option>
+                    <calcite-option id="RE" value="RE">RE - Recreational Road</calcite-option>
+                    <calcite-option id="RM" value="RM">RM - Ranch to Market Road</calcite-option>
+                    <calcite-option id="RR" value="RR">RR - Ranch Road</calcite-option>
+                    <calcite-option id="SH" value="SH">SH - State Highway</calcite-option>
+                    <calcite-option id="SL" value="SL">SL - State Highway Loop</calcite-option>
+                    <calcite-option id="SS" value="SS">SS - State Highway Spur</calcite-option>
+                    <calcite-option id="UA" value="UA">UA - US Alternate</calcite-option>
+                    <calcite-option id="UP" value="UP">UP - US Highway Spur</calcite-option>
+                    <calcite-option id="UR" value="UR">UR - Urban Road</calcite-option>
+                    <calcite-option id="US" value="US">US - US Highway</calcite-option>
+                </calcite-select>
+            </div>
+            <div id="rteNumberTool" class="specificTool">
+                <calcite-label class="boldLabel">Enter Route Number</calcite-label>
+                <calcite-input-number id="inputRteNumber" placeholder="Enter Route Number" clearable number-button-type="none"></calcite-input-number>
+            </div>
+            <calcite-button id="searchForRoute" class="boldLabel button specificTool" icon-start="all-servers">Search for Route</calcite-button>
+            <calcite-button id="resetSearchTool" class="boldLabel button specificTool" appearance="outline-fill">Reset Search Tool</calcite-button>
         </div>
-
+        <br><br>
+        <div id="results">
+            <p id="resultsInfo">
+                <!-- info added by javascript-->
+            </p>
+            <table id='table'>
+                <thead id="thead">
+                    <!-- rows added by javascript-->
+                </thead>
+                <tbody id="tbody">
+                    <!-- rows added by javascript-->
+                </tbody>
+            </table>
+        </div>
+        
     </body>
 </html>
 
