@@ -139,12 +139,12 @@
                                 document.getElementById('thead').innerHTML = ''; 
                                 document.getElementById('tbody').innerHTML = '';
 
-                                document.getElementById('resultsInfo').innerHTML = `Found: ${numFeatures} results. Please try a new search.`;
+                                document.getElementById('resultsInfo').innerHTML = `<strong>Found: </strong> ${numFeatures} results. Please try a new search.`;
                             } else {
                                 // Create Table with Results
 
                                 // PROBABLY WANT TO SAY HOW MANY RESULTS
-                                document.getElementById('resultsInfo').innerHTML = `Found: ${numFeatures} results`;
+                                document.getElementById('resultsInfo').innerHTML = `<strong>Found: </strong> ${numFeatures} results`;
                                                             
                                 const headerRow = document.createElement("tr");
 
