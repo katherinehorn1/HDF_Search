@@ -12,7 +12,7 @@
             .header {
                 padding: 20px;
                 text-align: center;
-                background: #0057A8;
+                background: #007ac2;
                 color: white;
                 font-size: 15px;
             }
@@ -21,10 +21,10 @@
                 margin: 20px;
             }
             a:link{
-                color:blue
+                color: #007ac2;
             }
             a:visited{
-                color:blue
+                color: #007ac2;
             }
             #searchTool {
                 margin-top: 20px;
@@ -152,10 +152,11 @@
                                 document.getElementById('thead').innerHTML = ''; 
                                 document.getElementById('tbody').innerHTML = '';
 
-
+                                // Create header row
                                 headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
                                 thead.appendChild(headerRow);
 
+                                // Create each result row
                                 features.forEach(element => {
                                     // Add rows to table for each result
                                     const row = document.createElement("tr");
@@ -180,7 +181,7 @@
         </div>
         <div>
             <p>
-            Highway Designation Files provide a description of proposed changes to the state highway system. A “designation” is the unique combination of a route’s name and its intended path. Proposed changes include new designations and any changes to existing designations. Such changes are approved by the <a href="http://www.txdot.gov/inside-txdot/administration/commission.html">Texas Transportation Commission</a> and are officially documented on Minute Orders, which can be found <a href="https://publicdocs.txdot.gov/minord/mosearch/Pages/Minute-Order-Search-Results.aspx#Minute-Order-Search-Results.aspx">here</a>. Highway Designation Files use language from the Minute Orders to provide a brief overview of the proposed changes. To learn more about the designation process, click <a href="http://www.txdot.gov/inside-txdot/division/transportation-planning/highway-designation.html">here</a>.
+            Highway Designation Files provide a description of proposed changes to the state highway system. A “designation” is the unique combination of a route's name and its intended path. Proposed changes include new designations and any changes to existing designations. Such changes are approved by the <a href="http://www.txdot.gov/inside-txdot/administration/commission.html">Texas Transportation Commission</a> and are officially documented on Minute Orders, which can be found <a href="https://publicdocs.txdot.gov/minord/mosearch/Pages/Minute-Order-Search-Results.aspx#Minute-Order-Search-Results.aspx">here</a>. Highway Designation Files use language from the Minute Orders to provide a brief overview of the proposed changes. To learn more about the designation process, click <a href="http://www.txdot.gov/inside-txdot/division/transportation-planning/highway-designation.html">here</a>.
             </p>
             <p>
                 <strong>
@@ -188,7 +189,7 @@
                 </strong>
             </p>
             <p>
-                For questions or comments about the Texas Highway Designation Files, please <a href="https://www.txdot.gov/about/contact-us/ask-a-general-question.html?id=tpp-email">email us</a>.
+                For questions or comments about the Texas Highway Designation Files, please <a href="https://www.txdot.gov/about/contact-us/ask-a-general-question.html?id=tpp-email">email TPP</a>.
             </p>
             <br>
             <p>
