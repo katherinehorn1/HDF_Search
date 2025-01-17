@@ -41,7 +41,7 @@
                 font-weight: bold;
             }
             table {
-                width: 100%;
+                width: 25%;
                 border-collapse: collapse;
             }
             table, th, td {
@@ -153,23 +153,90 @@
                                 document.getElementById('tbody').innerHTML = '';
 
                                 // Create header row
-                                headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
+                                //headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
+
+                                headerRow.innerHTML = `<th>Result #</th><th>RTE_NM</th>`;
+
                                 thead.appendChild(headerRow);
 
                                 // Create each result row
+                                let index = 1;
                                 features.forEach(element => {
                                     // Add rows to table for each result
                                     const row = document.createElement("tr");
-                                    row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["rte_prefix"]}</td><td>${element["attributes"]["rte_number"]}</td><td>${element["attributes"]["rte_suffix"]}</td>`;
+                                    //row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["rte_prefix"]}</td><td>${element["attributes"]["rte_number"]}</td><td>${element["attributes"]["rte_suffix"]}</td>`;
+                                    
+                                    row.innerHTML = `<td>${index}</td><td>${element["attributes"]["rte_nm"]}</td>`;
+
                                     tbody.appendChild(row);
+                                    index++;
+
+                                    // document.getElementById(`"getDetailsFor${element["attributes"]["rte_nm"]}"`).addEventListener("click", async () => {
+                                    //     console.log("inside button");
+                                    // });
                                 });                              
                             }
-
-                            // "features" is key, value is array ... array of json objects
+                            
                         }
                     };
                 }
 
+                function getDetails(rteName) {
+                    // Create variable for xmlhttp request, used below to get info from server
+                    console.log("inside get details function");
+                    // let req = new XMLHttpRequest();
+                    // req.responseType = 'json';
+
+                    // // Service url
+                    // let serviceURL = "https://maps.txdot.gov/createags/rest/services/Hosted/HDF/FeatureServer/0/query?where=rte_nm+%3D+%27" + rteName + "outFields=*&f=pjson";
+                   
+                    // // Send request
+                    // req.open("GET",serviceURL,true);
+                    // req.send();  
+
+                    // // After request goes through, need to display results
+                    // req.onreadystatechange=async function() {
+                    //     if (req.readyState == 4 && req.status == 200) {
+                    //         let features = req.response["features"];
+                    //         let numFeatures = features.length;
+                    //         // Create Table with Results
+
+                    //         // PROBABLY WANT TO SAY HOW MANY RESULTS
+                    //         document.getElementById('resultsInfo').innerHTML = `<strong>Found: </strong> ${numFeatures} results`;
+                                                            
+                    //         const headerRow = document.createElement("tr");
+
+                    //         // Clear previous results
+                    //         document.getElementById('thead').innerHTML = ''; 
+                    //         document.getElementById('tbody').innerHTML = '';
+
+                    //         // Create header row
+                    //         //headerRow.innerHTML = `<th>RTE_NM</th><th>RTE_Prefix</th><th>RTE_Number</th><th>RTE_Suffix</th>`;
+
+                    //         headerRow.innerHTML = `<th>Result #</th><th>RTE_NM</th>`;
+
+                    //         thead.appendChild(headerRow);
+
+                    //         // Create each result row
+                    //         let index = 1;
+                    //         features.forEach(element => {
+                    //             // Add rows to table for each result
+                    //             const row = document.createElement("tr");
+                    //             //row.innerHTML = `<td>${element["attributes"]["rte_nm"]}</td><td>${element["attributes"]["rte_prefix"]}</td><td>${element["attributes"]["rte_number"]}</td><td>${element["attributes"]["rte_suffix"]}</td>`;
+                                    
+                    //             row.innerHTML = `<td>${index}</td><td><button id="getDetailsButton" onclick="getDetails()">${element["attributes"]["rte_nm"]}</button></td>`;
+
+                    //             tbody.appendChild(row);
+                    //             index++;
+                    //         });                              
+                    //     }
+
+                    // // "features" is key, value is array ... array of json objects
+                    // }
+                }
+
+
+                
             };
             
         </script>
